@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Search Map</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: row;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Search Bar Section */
+        #search-container {
+            width: 25%;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        #hospital-info {
+            padding: 10px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            color: #555;
+            font-size: 14px;
+            display: none; /* Hide by default */
+        }
+
+        /* Map Section */
+        #map {
+            height: 600px;
+            width: 75%;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Left quarter: Search Bar -->
+    <div id="search-container">
+        <h2>Search Hospitals</h2>
+        <input type="text" id="hospital-search" placeholder="Search for a hospital..." oninput="searchHospital()">
+        <div id="hospital-info"></div>
+    </div>
+
+    <!-- Right quarter: Map -->
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        // Initialize the map centered on Kathmandu
+        var map = L.map('map').setView([27.7172, 85.3240], 12);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        let hospitalsData = [];
+
+        // Fetch hospital data from the hospital app API
+        fetch('http://127.0.0.1:8000/hospital/api/hospitals/')
+            .then(response => response.json())
+            .then(hospitals => {
+                hospitalsData = hospitals; // Store hospital data locally
+                hospitals.forEach(function(hospital) {
+                    // Add markers for all hospitals
+                    L.marker([hospital.latitude, hospital.longitude])
+                        .addTo(map)
+                        .bindPopup(`<b>${hospital.name}</b><br>${hospital.address}`)
+                        .openPopup();
+                });
+            })
+            .catch(error => console.error("Error loading hospitals:", error));
+
+        function searchHospital() {
+            let searchTerm = document.getElementById("hospital-search").value.toLowerCase();
+            let foundHospital = hospitalsData.find(hospital => hospital.name.toLowerCase().includes(searchTerm));
+
+            if (foundHospital) {
+                // Show info about the hospital
+                document.getElementById("hospital-info").innerHTML = `<b>${foundHospital.name}</b><br>${foundHospital.address}`;
+                document.getElementById("hospital-info").style.display = 'block'; // Show hospital info section
+                
+                // Clear existing markers
+                map.eachLayer(function(layer) {
+                    if (layer instanceof L.Marker) {
+                        map.removeLayer(layer);
+                    }
+                });
+
+                // Add the marker for the searched hospital only
+                L.marker([foundHospital.latitude, foundHospital.longitude])
+                    .addTo(map)
+                    .bindPopup(`<b>${foundHospital.name}</b><br>${foundHospital.address}`)
+                    .openPopup();
+
+                // Zoom into the hospital's location
+                map.setView([foundHospital.latitude, foundHospital.longitude], 14);
+            } else {
+                document.getElementById("hospital-info").innerHTML = "No hospital found.";
+                document.getElementById("hospital-info").style.display = 'block'; // Show "No hospital found" message
+            }
+        }
+    </script>
+
+</body>
+</html>

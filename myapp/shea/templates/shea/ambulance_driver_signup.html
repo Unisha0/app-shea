@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ambulance Driver Signup</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'shea/css/signup.css' %}">
+</head>
+<body>
+    <div class="signup-container">
+        <h1>Ambulance Driver Signup</h1>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Signup</button>
+        </form>
+    </div>
+</body>
+</html>

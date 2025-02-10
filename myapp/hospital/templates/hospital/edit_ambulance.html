@@ -1,0 +1,10 @@
+<h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Ambulance</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <div>
+        {{ form.as_p }}
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="{% url 'hospital:manage_ambulances' %}" class="btn btn-secondary">Cancel</a>
+</form>

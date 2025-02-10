@@ -1,0 +1,31 @@
+{% extends 'hospital/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-4">Manage Doctors</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Doctor Name</th>
+                <th>Specialty</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doctor in doctors %}
+            <tr>
+                <td>{{ doctor.first_name }} {{ doctor.last_name }}</td>
+                <td>{{ doctor.specialty }}</td>
+                <td>{{ doctor.email }}</td>
+                <td>{{ doctor.phone_number }}</td>
+                <td>
+                    <a href="{% url 'edit_doctor_schedule' doctor.pk %}" class="btn btn-primary">Edit Schedule</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

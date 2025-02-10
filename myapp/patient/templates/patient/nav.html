@@ -1,0 +1,91 @@
+<nav class="sidebar close">
+    <header>
+        <div class="image-text">
+            <span class="image">
+
+            </span>
+
+            <div class="text logo-text">
+                <span class="profession">Patient Dashboard</span>
+            </div>
+        </div>
+
+        <i class='bx bx-chevron-right toggle'></i>
+    </header>
+
+    <div class="menu-bar">
+        <div class="menu">
+
+            <li class="search-box">
+                <i class='bx bx-search icon'></i>
+                <input type="text" placeholder="Search...">
+            </li>
+
+            <ul class="menu-links">
+                <li class="nav-link">
+                    <a href="{% url 'patient_dashboard' %}">
+                        <i class="bx bx-user-circle icon"></i>
+                        <span class="text nav-text">Welcome, {{ patient.name }}</span>
+                    </a>
+                </li>
+
+                <li class="nav-link">
+                    <a href="{% url 'ambulance' %}">
+                        <i class="bx bxs-ambulance icon"></i>
+                        <span class="text nav-text">Ambulance</span>
+                    </a>
+                </li>
+
+                <li class="nav-link">
+                    <a href="{% url 'hospital' %}">
+                        <i class="bx bx-heart icon"></i>
+                        <span class="text nav-text">Hospital</span>
+                    </a>
+                </li>
+
+
+                <li class="nav-link">
+                    <a href="{% url 'patient_history' %}">
+                        <i class='bx bx-folder icon'></i>
+                        <span class="text nav-text">Medical History</span>
+                    </a>
+                </li>
+
+                <li class="nav-link">
+                    <a href="{% url 'user_account' %}">
+                        <i class='bx bx-cog icon'></i>
+                        <span class="text nav-text">Account Setting</span>
+                    </a>
+                </li>
+
+                <li class="nav-link">
+                    <a href="{% url 'help_page' %}">
+                        <i class='bx bx-help-circle icon'></i>
+                        <span class="text nav-text">Help</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="bottom-content">
+            <li>
+                <a href="{% url 'logout' %}">
+                    <i class='bx bx-log-out icon'></i>
+                    <span class="text nav-text">Logout</span>
+                </a>
+            </li>
+
+            <li class="mode">
+                <div class="sun-moon">
+                    <i class='bx bx-moon icon moon'></i>
+                    <i class='bx bx-sun icon sun'></i>
+                </div>
+                <span class="mode-text text">Dark mode</span>
+
+                <div class="toggle-switch">
+                    <span class="switch"></span>
+                </div>
+            </li>
+        </div>
+    </div>
+</nav>

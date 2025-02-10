@@ -1,0 +1,40 @@
+<h1>Manage Ambulances</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Ambulance Number</th>
+            <th>Driver</th>
+            <th>Contact</th>
+            <th>Status</th>
+            <th>Available</th>
+            <th>Last Known Location</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ambulance in ambulances %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ ambulance.ambulance_number }}</td>
+            <td>{{ ambulance.driver_name }}</td>
+            <td>{{ ambulance.contact_number }}</td>
+            <td>{{ ambulance.get_status_display }}</td>
+            <td>{{ "Yes" if ambulance.available else "No" }}</td>
+            <td>
+                {% if ambulance.latitude and ambulance.longitude %}
+                {{ ambulance.latitude }}, {{ ambulance.longitude }}
+                {% else %}
+                Not Available
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'hospital:edit_ambulance' ambulance.id %}">Edit</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'hospital:edit_ambulance' %}" class="btn btn-primary">Add New Ambulance</a>
