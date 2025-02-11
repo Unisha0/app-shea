@@ -1,7 +1,11 @@
+import math
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from .models import Hospital, Doctor, DoctorSchedule, Ambulance
+from django.http import JsonResponse
+from django.db.models import Q
+from hospital.models import Hospitaldb
 from .forms import HospitalSignupForm, HospitalLoginForm, HospitalForm, DoctorForm, DoctorScheduleForm, AmbulanceForm
 
 # Hospital Signup
@@ -196,3 +200,39 @@ from hospital.models import Hospitaldb
 def hospital_list(request):
     hospitals = Hospitaldb.objects.all().values("name", "speciality", "contact", "address", "latitude", "longitude")
     return JsonResponse(list(hospitals), safe=False)
+
+
+def hospital_list(request):
+    # Get the search term (name or specialty)
+    search_term = request.GET.get('search', '').lower()
+
+    # Get the patient's current location for proximity calculation (can be passed from frontend)
+    patient_lat = float(request.GET.get('lat', 27.7172))  # Default: Kathmandu latitude
+    patient_lon = float(request.GET.get('lon', 85.3240))  # Default: Kathmandu longitude
+
+    # Search hospitals by name or specialty
+    hospitals = Hospitaldb.objects.filter(
+        Q(name__icontains=search_term) | Q(speciality__icontains=search_term)
+    ).values("name", "speciality", "contact", "address", "latitude", "longitude")
+
+    # Sort hospitals by distance to the patient using haversine formula
+    hospitals = sorted(hospitals, key=lambda hospital: haversine_distance(
+        patient_lat, patient_lon, hospital['latitude'], hospital['longitude']))
+
+    # Return the hospitals as a JsonResponse
+    return JsonResponse(list(hospitals), safe=False)
+
+# Haversine formula for distance calculation
+def haversine_distance(lat1, lon1, lat2, lon2):
+    R = 6371.0  # Radius of the Earth in km
+    dLat = (lat2 - lat1) * (3.14159 / 180)
+    dLon = (lon2 - lon1) * (3.14159 / 180)
+    lat1 = lat1 * (3.14159 / 180)
+    lat2 = lat2 * (3.14159 / 180)
+    
+    a = (pow(math.sin(dLat / 2), 2) +
+         math.cos(lat1) * math.cos(lat2) *
+         pow(math.sin(dLon / 2), 2))
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    return R * c  # Distance in km

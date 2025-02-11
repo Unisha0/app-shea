@@ -16,8 +16,26 @@
             <div class="form-group">
                 {{ form.as_p }}
             </div>
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
             <button type="submit" class="signup-btn">Signup</button>
         </form>
     </div>
+    
+    <script>
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    document.getElementById('latitude').value = position.coords.latitude;
+                    document.getElementById('longitude').value = position.coords.longitude;
+                },
+                function(error) {
+                    console.error('Error obtaining location:', error);
+                }
+            );
+        } else {
+            console.error('Geolocation is not supported by this browser.');
+        }
+    </script>
 </body>
 </html>

@@ -7,7 +7,7 @@ class PatientSignupForm(forms.ModelForm):
 
     class Meta:
         model = Patient
-        fields = ['name', 'email', 'phone_number', 'password']
+        fields = ['name', 'email', 'phone_number', 'password']  # Removed latitude and longitude from the form
 
     def clean(self):
         cleaned_data = super().clean()
@@ -33,10 +33,12 @@ class PatientLoginForm(forms.Form):
 class PatientUpdateForm(forms.ModelForm):
     profile_picture = forms.ImageField(required=False, label="Profile Picture")
     email = forms.EmailField(required=True, label="Email")
+    latitude = forms.DecimalField(max_digits=9, decimal_places=6, required=False, label="Latitude")
+    longitude = forms.DecimalField(max_digits=9, decimal_places=6, required=False, label="Longitude")
 
     class Meta:
         model = Patient
-        fields = ['name', 'email', 'phone_number', 'profile_picture']
+        fields = ['name', 'email', 'phone_number', 'profile_picture', 'latitude', 'longitude']
 
 
 class UserAccountSettingsForm(forms.ModelForm):
