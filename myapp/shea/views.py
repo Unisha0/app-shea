@@ -1,51 +1,71 @@
-from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from .forms import AmbulanceDriverSignupForm, AmbulanceDriverLoginForm
 from .models import AmbulanceDriver
 
-# View for ambulance driver signup
+# 🚑 SIGNUP VIEW 🚑
 def ambulance_driver_signup(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = AmbulanceDriverSignupForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Signup successful! Please log in.')
-            return redirect('ambulance_driver_login')  # Redirect to the login page
+            driver = form.save(commit=False)  # Don't save yet
+            driver.set_password(form.cleaned_data["password"])  # Hash password
+            driver.save()  # Now save
+            messages.success(request, "Signup successful! You can now log in.")
+            return redirect("shea:ambulance_driver_login")  # Redirect using namespace
+        else:
+            messages.error(request, "Error in form submission. Please check your details.")
     else:
         form = AmbulanceDriverSignupForm()
-    return render(request, 'shea/ambulance_driver_signup.html', {'form': form})
+    
+    return render(request, "shea/ambulance_driver_signup.html", {"form": form})
 
-# View for ambulance driver login
+# 🚑 LOGIN VIEW 🚑
 def ambulance_driver_login(request):
-    if request.method == 'POST':
-        phone_number = request.POST.get('phone_number')
-        password = request.POST.get('password')
-        
-        # Try to authenticate the driver
-        try:
-            driver = AmbulanceDriver.objects.get(phone_number=phone_number)
-            if driver.check_password(password):  # Check password for matching
-                login(request, driver)
-                return redirect('ambulance_driver_dashboard')  # Redirect to the dashboard
-            else:
-                messages.error(request, 'Invalid password.')
-        except AmbulanceDriver.DoesNotExist:
-            messages.error(request, 'Invalid phone number.')
+    if request.session.get("driver_id"):  # Prevent logged-in users from seeing login page
+        return redirect("shea:ambulance_driver_dashboard")
 
+    if request.method == "POST":
+        form = AmbulanceDriverLoginForm(request.POST)
+        if form.is_valid():
+            phone_number = form.cleaned_data.get("phone_number")
+            password = form.cleaned_data.get("password")
+
+            try:
+                driver = AmbulanceDriver.objects.get(phone_number=phone_number)
+                if driver.check_password(password):  # Check hashed password
+                    request.session["driver_id"] = driver.id  # Store in session
+                    messages.success(request, "Login successful!")
+                    return redirect("shea:ambulance_driver_dashboard")  # Redirect using namespace
+                else:
+                    messages.error(request, "Incorrect password!")
+            except AmbulanceDriver.DoesNotExist:
+                messages.error(request, "Invalid phone number or password!")
+        else:
+            messages.error(request, "Please check the form for errors.")
+    
     else:
         form = AmbulanceDriverLoginForm()
+    
+    return render(request, "shea/ambulance_driver_login.html", {"form": form})
 
-    return render(request, 'shea/ambulance_driver_login.html', {'form': form})
-
-# View for ambulance driver logout
-def ambulance_driver_logout(request):
-    logout(request)
-    return redirect('ambulance_driver_login')
-
-# View for ambulance driver dashboard
+# 🚑 DASHBOARD VIEW 🚑
 def ambulance_driver_dashboard(request):
-    driver = request.user  # Assuming the driver is logged in and is the user
-    # Add any driver-specific data you want to display here, like ambulance assignments, etc.
-    return render(request, 'shea/ambulance_driver_dashboard.html', {'driver': driver})
+    driver_id = request.session.get("driver_id")
+    if not driver_id:
+        return redirect("shea:ambulance_driver_login")  # Redirect using namespace
 
+    try:
+        driver = AmbulanceDriver.objects.get(id=driver_id)
+    except AmbulanceDriver.DoesNotExist:
+        messages.error(request, "Invalid session. Please log in again.")
+        request.session.flush()  # Clear invalid session
+        return redirect("shea:ambulance_driver_login")
+
+    return render(request, "shea/ambulance_driver_dashboard.html", {"driver": driver})
+
+# 🚑 LOGOUT VIEW 🚑
+def ambulance_driver_logout(request):
+    request.session.flush()  # Securely clear session
+    messages.success(request, "You have been logged out.")
+    return redirect("shea:ambulance_driver_login")

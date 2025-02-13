@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import Ambulance
+from .models import AmbulanceDriver
 
-admin.site.register(Ambulance)
+admin.site.register(AmbulanceDriver)

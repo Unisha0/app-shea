@@ -195,3 +195,4 @@ from .models import Hospital
 def get_hospitals(request):
     hospitals = Hospital.objects.all().values('name', 'address', 'latitude', 'longitude')
     return JsonResponse(list(hospitals), safe=False)
+

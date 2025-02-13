@@ -66,5 +66,5 @@ class Hospitaldb(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
 
-    def str(self):
-        return self.name    
+    def __str__(self):  # ✅ Double underscores here
+        return self.name 

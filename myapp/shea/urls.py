@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+
+app_name = "shea"  # ✅ Define the namespace
 urlpatterns = [
     path('signup/', views.ambulance_driver_signup, name='ambulance_driver_signup'),
     path('login/', views.ambulance_driver_login, name='ambulance_driver_login'),
