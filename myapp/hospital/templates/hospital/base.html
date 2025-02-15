@@ -28,16 +28,39 @@
         <div class="sidebar">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hospital:dashboard' %}"><i class="emoji fas fa-home"></i> Dashboard</a>
+                    <a class="nav-link" href="{% url 'hospital:dashboard' %}">
+                        <i class="emoji fas fa-home"></i> Dashboard
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hospital:manage_hospital' %}"><i class="emoji fas fa-hospital"></i> Manage Hospitals</a>
+                    <a class="nav-link" href="{% url 'hospital:profile' %}">
+                        <i class="emoji fas fa-hospital"></i> Profile
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hospital:manage_doctors' %}"><i class="emoji fas fa-user-md"></i> Manage Doctors</a>
+                    <a class="nav-link" href="{% url 'hospital:manage_ambulances' %}">
+                        <i class="emoji fas fa-ambulance"></i> Manage Ambulances
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hospital:manage_ambulances' %}"><i class="emoji fas fa-ambulance"></i> Manage Ambulances</a>
+                    <a class="nav-link" href="{% url 'hospital:notifications' %}">
+                        <i class="emoji fas fa-bell"></i> Notifications
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'hospital:account_settings' %}">
+                        <i class="emoji fas fa-user-cog"></i> Account Settings
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'hospital:help_and_support' %}">
+                        <i class="emoji fas fa-question-circle"></i> Help & Support
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="{% url 'hospital:logout' %}">
+                        <i class="emoji fas fa-sign-out-alt"></i> Logout
+                    </a>
                 </li>
             </ul>
         </div>

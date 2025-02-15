@@ -1,5 +1,5 @@
 from django import forms
-from .models import Hospital, Doctor, DoctorSchedule, Ambulance
+from .models import Hospital, Ambulance
 from django.core.exceptions import ValidationError
 
 # Custom validator for PAN number to ensure it's exactly 9 digits long
@@ -30,17 +30,7 @@ class HospitalForm(forms.ModelForm):
     class Meta:
         model = Hospital
         fields = ['name', 'address', 'email', 'website', 'description']
-
-class DoctorForm(forms.ModelForm):
-    class Meta:
-        model = Doctor
-        fields = ['first_name', 'last_name', 'specialty', 'email', 'available']
-
-class DoctorScheduleForm(forms.ModelForm):
-    class Meta:
-        model = DoctorSchedule
-        fields = ['start_time', 'end_time', 'days_available']
-
+        
 class AmbulanceForm(forms.ModelForm):
     class Meta:
         model = Ambulance

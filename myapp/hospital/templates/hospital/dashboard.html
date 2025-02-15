@@ -20,7 +20,7 @@
                 </span>
 
                 <div class="text logo-text">
-                    <span class="profession">Hospital Dashboard</span>
+                    <span class="profession"></span>
                 </div>
             </div>
 
@@ -34,40 +34,39 @@
                     <i class='bx bx-search icon'></i>
                     <input type="text" placeholder="Search...">
                 </li>
-
-                <ul class="menu-links">
-                    <li class="nav-link">
-                        <a href="#">
-                            <i class="bx bx-user-circle icon"></i>
-                            <span class="text nav-text">Welcome, {{ hospital.name }}</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-link">
-                        <a href="{% url 'hospital:manage_doctors' %}">
-                            <i class="bx bx-user-plus icon"></i>
-                            <span class="text nav-text">Manage Doctors</span>
-                        </a>
-                    </li>
+            
 
                     <li class="nav-link">
                         <a href="{% url 'hospital:manage_ambulances' %}">
                             <i class="bx bxs-ambulance icon"></i>
-                            <span class="text nav-text">Manage Ambulances</span>
+                            <span class="text nav-text">MANAGE AMBULANCE</span>
                         </a>
                     </li>
 
+                    
                     <li class="nav-link">
-                        <a href="{% url 'hospital:manage_hospital' %}">
+                        <a href="{% url 'hospital:notifications' %}">
                             <i class="bx bx-building-house icon"></i>
-                            <span class="text nav-text">Manage Hospital Info</span>
+                            <span class="text nav-text">NOTIFICATIONS</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="{% url 'hospital:account_settings' %}">
+                            <i class="bx bx-user-plus icon"></i>
+                            <span class="text nav-text">ACCOUNT SETTINGS</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="{% url 'hospital:help_and_support' %}">
+                            <i class="bx bx-user-plus icon"></i>
+                            <span class="text nav-text">HELP AND SUPPORTS</span>
                         </a>
                     </li>
 
                     <li class="nav-link">
                         <a href="{% url 'hospital:logout' %}">
                             <i class="bx bx-log-out icon"></i>
-                            <span class="text nav-text">Logout</span>
+                            <span class="text nav-text">LOGOUT</span>
                         </a>
                     </li>
                 </ul>
@@ -108,4 +107,3 @@
 </body>
 
 </html>
-

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'hospital/css/notifications.css' %}">
+    <link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
+
+    <title>Notifications | Smart Health Emergency Assistant</title>
+</head>
+
+<body>
+    <nav class="sidebar close">
+        <!-- Sidebar content here (same as before) -->
+    </nav>
+
+    <section class="home">
+        <div class="header">
+            <div class="text">Notifications</div>
+            <div class="notification-bell">
+                <i class="bx bx-bell"></i>
+                <span class="notification-count">2</span> <!-- Change the number dynamically -->
+            </div>
+        </div>
+
+        <div class="notifications-list">
+            <div class="notification">
+                <p><strong>New Emergency Alert</strong></p>
+                <span>Emergency alert from Ambulance #12</span>
+                <span class="timestamp">10 mins ago</span>
