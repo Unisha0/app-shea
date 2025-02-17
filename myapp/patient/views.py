@@ -55,6 +55,7 @@ def login(request):
         form = PatientLoginForm()
     return render(request, 'patient/login.html', {'form': form})
 
+
 # Dashboard view
 def dashboard(request):
     patient_id = request.session.get('patient_id')
@@ -196,3 +197,100 @@ def get_hospitals(request):
     hospitals = Hospital.objects.all().values('name', 'address', 'latitude', 'longitude')
     return JsonResponse(list(hospitals), safe=False)
 
+
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.http import JsonResponse
+from hospital.models import Hospital
+from .models import AmbulanceRequest, Patient
+from .forms import AmbulanceRequestForm
+from django.conf import settings
+
+# Request an ambulance
+def request_ambulance(request, hospital_id):
+    if not request.session.get('patient_id'):
+        return redirect('patient_login')
+
+    patient = get_object_or_404(Patient, id=request.session['patient_id'])
+    hospital = get_object_or_404(Hospital, id=hospital_id)
+
+    # Prevent duplicate requests
+    existing_request = AmbulanceRequest.objects.filter(patient=patient, hospital=hospital, status='Pending').exists()
+    if existing_request:
+        messages.warning(request, 'You already have a pending request!')
+        return redirect('patient_dashboard')
+
+    # Create request
+    ambulance_request = AmbulanceRequest.objects.create(patient=patient, hospital=hospital, status='Pending')
+
+    # Notify hospital via email
+    subject = 'New Ambulance Request'
+    message = (f"Patient Name: {patient.name}\n"
+               f"Email: {patient.email}\n"
+               f"Phone: {patient.phone_number}\n"
+               f"Address: {patient.latitude}, {patient.longitude}\n"
+               f"Status: {ambulance_request.status}")
+
+    send_mail(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [hospital.email],
+        fail_silently=False,
+    )
+
+    # Optionally send patient a notification that the request was submitted
+    patient_notification_subject = "Ambulance Request Submitted"
+    patient_notification_message = (f"Dear {patient.name},\n\n"
+                                    f"Your ambulance request to {hospital.name} has been submitted.\n\n"
+                                    f"Status: {ambulance_request.status}\n"
+                                    f"We'll notify you once your request is processed.")
+
+    send_mail(
+        patient_notification_subject,
+        patient_notification_message,
+        settings.DEFAULT_FROM_EMAIL,
+        [patient.email],
+        fail_silently=False,
+    )
+
+    messages.success(request, 'Ambulance request sent successfully!')
+    return redirect('patient_dashboard')
+
+# Check request status
+def check_request_status(request):
+    if not request.session.get('patient_id'):
+        return JsonResponse({'error': 'User not logged in'}, status=400)
+
+    patient = get_object_or_404(Patient, id=request.session['patient_id'])
+    request_status = AmbulanceRequest.objects.filter(patient=patient).last()
+
+    if not request_status:
+        return JsonResponse({'status': 'No active request'})
+
+    return JsonResponse({'status': request_status.status})
+
+
+# Respond to request (hospital action: Accept or Reject)
+def respond_to_request(request, request_id, action):
+    if not request.session.get('hospital_id'):
+        return redirect('hospital_login')
+
+    hospital = get_object_or_404(Hospital, id=request.session['hospital_id'])
+    ambulance_request = get_object_or_404(AmbulanceRequest, id=request_id)
+
+    if ambulance_request.hospital != hospital:
+        messages.error(request, 'You do not have permission to respond to this request.')
+        return redirect('hospital_dashboard')
+
+    if action == 'accept':
+        ambulance_request.update_status('Accepted')
+        messages.success(request, 'Request accepted successfully.')
+    elif action == 'reject':
+        ambulance_request.update_status('Rejected')
+        messages.success(request, 'Request rejected successfully.')
+    else:
+        messages.error(request, 'Invalid action.')
+
+    return redirect('view_ambulance_requests')  # Redirect to list of requests or relevant page

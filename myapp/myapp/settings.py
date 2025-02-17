@@ -130,7 +130,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "geforce", "myapp", "staticfiles"),  # Your static file directory
+    os.path.join(BASE_DIR, 'static'),  # Your static files directory
 ]
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # This is where collected files will go
+
+# Email Configuration (for Gmail)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'assistantsmarthealth@gmail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = 'pvoz vfam htvk rnnq'  # Your Gmail app password (ensure no spaces or issues here)
+DEFAULT_FROM_EMAIL = 'assistantsmarthealth@gmail.com'  # Sender email
+

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import request_ambulance, check_request_status
 
 urlpatterns = [
     path('signup/', views.signup, name='patient_signup'),
@@ -11,9 +12,6 @@ urlpatterns = [
     path('help/', views.help_page, name='help_page'),
     path('patient-history/', views.patient_history, name='patient_history'),
     path('logout/', views.logout, name='logout'),
-     #path('nearest-hospital/', views.get_nearest_hospital, name='nearest_hospital'),
-    
+    path('request-ambulance/<int:hospital_id>/', request_ambulance, name='request_ambulance'),
+    path('check-request-status/', check_request_status, name='check_request_status'),
 ]
-
-
-

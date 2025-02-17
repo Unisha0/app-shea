@@ -1,32 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link rel="stylesheet" href="{% static 'hospital/css/notifications.css' %}">
     <link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
-
     <title>Notifications | Smart Health Emergency Assistant</title>
+    <style>
+        .notification-box {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 350px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            padding: 15px;
+        }
+
+        .notification-box.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .notification-bell {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .notification-bell i {
+            font-size: 24px;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            padding: 3px 7px;
+        }
+
+        .notification {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 10px 0;
+        }
+
+        .notification p {
+            margin: 5px 0;
+        }
+
+        .accept-reject-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .accept-reject-buttons a {
+            padding: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            width: 45%;
+            text-align: center;
+        }
+
+        .accept {
+            background-color: green;
+            color: white;
+        }
+
+        .reject {
+            background-color: red;
+            color: white;
+        }
+    </style>
 </head>
 
 <body>
     <nav class="sidebar close">
-        <!-- Sidebar content here (same as before) -->
+        <!-- Sidebar content here -->
     </nav>
 
     <section class="home">
         <div class="header">
             <div class="text">Notifications</div>
-            <div class="notification-bell">
+            <div class="notification-bell" onclick="toggleNotifications()">
                 <i class="bx bx-bell"></i>
-                <span class="notification-count">2</span> <!-- Change the number dynamically -->
+                <span class="notification-count">{{ requests.count }}</span>
             </div>
         </div>
 
-        <div class="notifications-list">
+        <!-- Notification box that will appear when bell is clicked -->
+        <div class="notification-box" id="notificationBox">
+            {% for request in requests %}
             <div class="notification">
-                <p><strong>New Emergency Alert</strong></p>
-                <span>Emergency alert from Ambulance #12</span>
-                <span class="timestamp">10 mins ago</span>
+                <p><strong>🚑 Emergency Request from {{ request.patient.name }}</strong></p>
+                <p>Email: {{ request.patient.email }}</p>
+                <p>Phone: {{ request.patient.phone_number }}</p>
+                <p>Address: {{ request.patient.address }}</p>
+                <span class="timestamp">Requested at: {{ request.requested_at }}</span>
+
+                <!-- Accept/Reject buttons -->
+                <div class="accept-reject-buttons">
+                    <a href="{% url 'respond_request' request.id 'accept' %}" class="accept">✅ Accept</a>
+                    <a href="{% url 'respond_request' request.id 'reject' %}" class="reject">❌ Reject</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No new requests.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <script>
+        // Toggle function to show and hide the notification box
+        function toggleNotifications() {
+            document.getElementById('notificationBox').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

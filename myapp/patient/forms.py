@@ -51,3 +51,12 @@ class UserAccountSettingsForm(forms.ModelForm):
     class Meta:
         model = UserAccountSettings
         fields = ['notifications_enabled']
+
+from django import forms
+from .models import AmbulanceRequest
+
+class AmbulanceRequestForm(forms.ModelForm):
+    class Meta:
+        model = AmbulanceRequest
+        fields = ['hospital','reason']
+

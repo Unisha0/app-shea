@@ -2,6 +2,8 @@ import math
 from django.db import models
 from django.core.validators import RegexValidator
 from hospital.models import Hospital, Ambulance  # Importing related models
+from django.core.mail import send_mail
+from django.conf import settings
 
 class Patient(models.Model):
     name = models.CharField(max_length=100)
@@ -90,33 +92,80 @@ class UserAccountSettings(models.Model):
 
     def __str__(self):
         return f"Settings for {self.patient.name}"
+    
 
+from hospital.models import Hospital
+from django.core.mail import send_mail
+from django.conf import settings
+
+from django.core.mail import send_mail
+from django.conf import settings
 
 class AmbulanceRequest(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Accepted', 'Accepted'),
+        ('Rejected', 'Rejected'),
+    ]
+
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='ambulance_requests')
-    ambulance = models.ForeignKey(Ambulance, on_delete=models.CASCADE)
+    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='ambulance_requests')
     requested_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(
-        max_length=20,
-        choices=[
-            ('Pending', 'Pending'),
-            ('Accepted', 'Accepted'),
-            ('Rejected', 'Rejected')
-        ],
-        default='Pending'
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    reason = models.TextField(default='No reason provided')
 
     def __str__(self):
-        return f"{self.patient.name} - {self.ambulance.hospital.name} ({self.status})"
+        return f"Request by {self.patient.name} to {self.hospital.name} - {self.status}"
 
+    def send_hospital_notification(self):
+        # Notification to the hospital when the patient sends a request
+        subject = "New Ambulance Request"
+        message = (f"Patient Name: {self.patient.name}\n"
+                   f"Email: {self.patient.email}\n"
+                   f"Phone: {self.patient.phone_number}\n"
+                   f"Address: {self.patient.latitude}, {self.patient.longitude}\n"
+                   f"Reason: {self.reason}\n"
+                   f"Status: {self.status}")
+        
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [self.hospital.email],
+            fail_silently=False,
+        )
 
-class Ambulance(models.Model):
-    name = models.CharField(max_length=255)
-    location = models.CharField(max_length=255)
-    is_available = models.BooleanField(default=True)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)  # Store latitude
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)  # Store longitude
+    def send_patient_notification(self, status):
+        # Notification to the patient when the hospital accepts or rejects the request
+        if status == 'Accepted':
+            subject = "Ambulance Request Accepted"
+            message = (f"Dear {self.patient.name},\n"
+                       f"Your ambulance request to {self.hospital.name} has been accepted.\n"
+                       f"Reason: {self.reason}\n"
+                       f"Status: {status}")
+        elif status == 'Rejected':
+            subject = "Ambulance Request Rejected"
+            message = (f"Dear {self.patient.name},\n"
+                       f"Sorry, your ambulance request to {self.hospital.name} has been rejected.\n"
+                       f"Reason: {self.reason}\n"
+                       f"Status: {status}")
+        
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [self.patient.email],
+            fail_silently=False,
+        )
 
-    def __str__(self):
-        return self.name
+    def save(self, *args, **kwargs):
+        # If the request is being created, send a hospital notification
+        if self._state.adding:
+            self.send_hospital_notification()
+        super().save(*args, **kwargs)
 
+    def update_status(self, new_status):
+        """This method will update the status and notify the patient."""
+        self.status = new_status
+        self.save()
+        self.send_patient_notification(new_status)

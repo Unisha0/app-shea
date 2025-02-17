@@ -143,3 +143,51 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 
     return R * c  # Distance in km
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from .models import Ambulance
+from patient.models import AmbulanceRequest  # Import AmbulanceRequest model from the patient app
+from django.core.mail import send_mail
+
+# View all pending requests for a hospital
+def view_ambulance_requests(request):
+    if not request.session.get('hospital_id'):  # Ensure hospital is logged in
+        return redirect('hospital_login')
+
+    hospital = get_object_or_404(Hospital, id=request.session['hospital_id'])  # Get hospital by session ID
+    requests = AmbulanceRequest.objects.filter(hospital=hospital, status='Pending')  # Filter pending requests
+
+    return render(request, 'hospital/notifications.html', {'requests': requests})
+
+# Accept or reject ambulance request
+def respond_to_request(request, request_id, response):
+    if not request.session.get('hospital_id'):
+        return redirect('hospital_login')  # Redirect if hospital is not logged in
+
+    ambulance_request = get_object_or_404(AmbulanceRequest, id=request_id)  # Get ambulance request by ID
+
+    # Ensure that the hospital is authorized to handle the request
+    if ambulance_request.hospital != request.user.hospital:
+        messages.error(request, "You do not have permission to respond to this request.")
+        return redirect('view_ambulance_requests')
+
+    if response == 'accept':
+        ambulance_request.status = 'Accepted'
+        message = f"Hospital has accepted your ambulance request, {ambulance_request.patient.name}! 🚑"
+    else:
+        ambulance_request.status = 'Rejected'
+        message = f"Sorry {ambulance_request.patient.name}, your request was declined."
+
+    ambulance_request.save()  # Save the updated status of the request
+
+    # Notify the patient via email
+    send_mail(
+        subject='Ambulance Request Update',
+        message=message,
+        from_email='assistantsmarthealth@gmail.com',  # Updated to your email address
+        recipient_list=[ambulance_request.patient.email],  # Send email to patient
+        fail_silently=True,
+    )
+
+    messages.success(request, f"Request {response}ed successfully!")
+    return redirect('view_ambulance_requests')  # Redirect to the list of requests

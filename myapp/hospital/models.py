@@ -45,4 +45,3 @@ class Ambulance(models.Model):
     def __str__(self):
         return f"Ambulance {self.ambulance_number}"
 
-from django.db import models
