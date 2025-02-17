@@ -1,78 +1,51 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Dashboard</title>
+    {% load static %}
+
+    <!-- Link to Hospital-specific CSS -->
+    <link rel="stylesheet" href="{% static 'hospital/css/dashboard.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .navbar { background-color: #007bff; }
-        .navbar-brand, .nav-link { color: white; }
-        .sidebar { width: 250px; height: 100vh; position: fixed; top: 0; left: 0; background-color: #f8f9fa; padding-top: 20px; }
-        .sidebar .nav-item { margin-bottom: 10px; }
-        .content { margin-left: 270px; padding: 20px; }
-        .emoji { font-size: 30px; }
-    </style>
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+
+    <title>{% block title %}Smart Health Emergency Assistant{% endblock %}</title>
 </head>
+
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="#">SHEA Hospital Dashboard</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </nav>
+    {% include 'hospital/nav.html' %}  <!-- Hospital Navigation -->
 
-    <div class="d-flex">
-        <div class="sidebar">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hospital:dashboard' %}">
-                        <i class="emoji fas fa-home"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hospital:profile' %}">
-                        <i class="emoji fas fa-hospital"></i> Profile
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hospital:manage_ambulances' %}">
-                        <i class="emoji fas fa-ambulance"></i> Manage Ambulances
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hospital:notifications' %}">
-                        <i class="emoji fas fa-bell"></i> Notifications
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hospital:account_settings' %}">
-                        <i class="emoji fas fa-user-cog"></i> Account Settings
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'hospital:help_and_support' %}">
-                        <i class="emoji fas fa-question-circle"></i> Help & Support
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-danger" href="{% url 'hospital:logout' %}">
-                        <i class="emoji fas fa-sign-out-alt"></i> Logout
-                    </a>
-                </li>
-            </ul>
-        </div>
+    {% block content %}  <!-- This is where page-specific content will be injected -->
+    {% endblock %}
 
-        <div class="content">
-            {% block content %}
-            {% endblock %}
-        </div>
-    </div>
+    <!-- JavaScript for sidebar toggle and dark mode -->
+    <script>
+        const body = document.querySelector('body'),
+              sidebar = body.querySelector('nav'),
+              toggle = body.querySelector(".toggle"),
+              searchBtn = body.querySelector(".search-box"),
+              modeSwitch = body.querySelector(".toggle-switch"),
+              modeText = body.querySelector(".mode-text");
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        toggle.addEventListener("click", () => {
+            sidebar.classList.toggle("close");
+        });
+
+        searchBtn.addEventListener("click", () => {
+            sidebar.classList.remove("close");
+        });
+
+        modeSwitch.addEventListener("click", () => {
+            body.classList.toggle("dark");
+
+            if (body.classList.contains("dark")) {
+                modeText.innerText = "Light mode";
+            } else {
+                modeText.innerText = "Dark mode";
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,25 @@
+{% extends "hospital/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'hospital/css/profile.css' %}?v=1">
+
+<div class="profile-container">
+  <h1>Welcome to <strong>{{ hospital.name }}</strong></h1>
+    <div class="profile-info">
+        <p><strong>Hospital Name:</strong> {{ hospital.name }}</p>
+        <p><strong>Address:</strong> {{ hospital.address }}</p>
+        <p><strong>Email:</strong> {{ hospital.email }}</p>
+        <p><strong>PAN Number:</strong> {{ hospital.pan_number }}</p>
+        <p><strong>Website:</strong> 
+            {% if hospital.website %}
+                <a href="{{ hospital.website }}" target="_blank">{{ hospital.website }}</a>
+            {% else %}
+                N/A
+            {% endif %}
+        </p>
+        <p><strong>Description:</strong> {{ hospital.description|default:"No description provided." }}</p>
+    </div>
+</div>
+{% endblock %}

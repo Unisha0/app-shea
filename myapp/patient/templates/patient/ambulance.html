@@ -263,9 +263,51 @@
         alert("Please select a hospital first.");
         return;
       }
-      document.getElementById("ambulance-request-message").innerHTML = `
-          <p>Ambulance requested from <b>${selectedHospital.name}</b>! We will notify you once the ambulance is on its way.</p>
-      `;
+
+      // Send request to the backend to notify hospital admin
+      fetch('/ambulance/request/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken'),  // Make sure to include CSRF token for POST requests in Django
+        },
+        body: JSON.stringify({
+          hospital_id: selectedHospital.id,
+          patient_lat: patientMarker.getLatLng().lat,
+          patient_lon: patientMarker.getLatLng().lng,
+          patient_name: 'Patient Name',  // You can replace this with the actual patient's name if needed
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById("ambulance-request-message").innerHTML = `
+            <p>Ambulance requested from <b>${selectedHospital.name}</b>! You will be notified when it's on its way.</p>
+          `;
+        } else {
+          alert("There was an error processing your request.");
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert("There was an error processing your request.");
+      });
+    }
+
+    // Function to retrieve the CSRF token from the cookies
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
     }
   </script>
 

@@ -1,0 +1,60 @@
+{% extends 'hospital/base.html' %}
+{% load static %}
+
+{% block title %}Help & Support | Smart Health Emergency Assistant{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'hospital/css/help.css' %}?v=1">
+
+<section class="help-page">
+    <div class="container ml-5">
+        <h1 class="page-title text-center">Help & Support</h1>
+
+        <!-- Managing Ambulance -->
+        <div class="help-section">
+            <h2 class="section-title">How to Manage Ambulance</h2>
+            <p class="section-description">Managing your ambulance details is easy and essential for ensuring quick responses to emergencies:</p>
+            <ul class="step-list">
+                <li><i class="fas fa-ambulance"></i> Go to the <strong>Manage Ambulance</strong> section in your dashboard.</li>
+                <li><i class="fas fa-plus-circle"></i> To add a new ambulance, click the <strong>Add Ambulance</strong> button, fill in the required details (ambulance number, driver name, contact info, etc.), and click <strong>Save</strong>.</li>
+                <li><i class="fas fa-edit"></i> To edit existing ambulance details, click on the <strong>Edit</strong> button next to the ambulance entry you wish to modify.</li>
+                <li><i class="fas fa-trash-alt"></i> To remove an ambulance, click the <strong>Delete</strong> button, and confirm the deletion.</li>
+            </ul>
+        </div>
+
+        <!-- Managing Notifications -->
+        <div class="help-section">
+            <h2 class="section-title">How to Manage Notifications</h2>
+            <p class="section-description">You can customize your notification settings to stay updated on important events:</p>
+            <ul class="step-list">
+                <li><i class="fas fa-bell"></i> Navigate to the <strong>Notification Settings</strong> section in your account settings.</li>
+                <li><i class="fas fa-toggle-on"></i> Toggle on or off notifications for events like new ambulance requests, emergencies, and system updates.</li>
+                <li><i class="fas fa-envelope"></i> You can also choose how you want to receive notifications (email, SMS, or in-app notifications).</li>
+                <li><i class="fas fa-check-circle"></i> After selecting your preferences, click <strong>Save Settings</strong> to apply your changes.</li>
+            </ul>
+        </div>
+
+        <!-- Managing Account Settings -->
+        <div class="help-section">
+            <h2 class="section-title">How to Manage Account Settings</h2>
+            <p class="section-description">Keep your account up-to-date to ensure smooth communication and secure access:</p>
+            <ul class="step-list">
+                <li><i class="fas fa-cogs"></i> Go to the <strong>Account Settings</strong> section in your profile.</li>
+                <li><i class="fas fa-user-edit"></i> To change your personal information, click the <strong>Edit Profile</strong> button and update your name, email, phone number, etc.</li>
+                <li><i class="fas fa-key"></i> To change your password, click on the <strong>Change Password</strong> button and follow the prompts to set a new password.</li>
+                <li><i class="fas fa-check-circle"></i> After making your changes, click <strong>Save</strong> to confirm your updates.</li>
+            </ul>
+        </div>
+
+        <div class="help-section">
+            <h2 class="section-title">Need Help? Contact Us</h2>
+            <p class="section-description">If you face any issues or need further assistance, feel free to contact us:</p>
+            <ul class="contact-info">
+                <li><i class="fas fa-envelope"></i> Email: <a href="mailto:support@smarthealth.com">support@smarthealth.com</a></li>
+                <li><i class="fas fa-phone"></i> Phone: +123-456-7890</li>
+                <li><i class="fas fa-comments"></i> Live Chat: Available on the website</li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,10 +1,11 @@
+from urllib import request
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password, check_password
 from hospital.models import Ambulance, Hospital
 from .models import Patient, Advertisement, PatientHistory
 from .forms import PatientSignupForm, PatientLoginForm
 from .serializers import AmbulanceSerializer  # Import the serializer
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from math import radians, cos, sin, sqrt, atan2
 import heapq
 
@@ -293,4 +294,5 @@ def respond_to_request(request, request_id, action):
     else:
         messages.error(request, 'Invalid action.')
 
-    return redirect('view_ambulance_requests')  # Redirect to list of requests or relevant page
+    return HttpResponse('Ambulance requested successfully!')  # You can redirect or show a success message
+    return render(request, 'ambulance/request.html')  # Or just return a response
