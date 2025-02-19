@@ -1,13 +1,19 @@
 from urllib import request
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password, check_password
-from hospital.models import Ambulance, Hospital
+from hospital.models import Hospitaldb, Hospital, Ambulance
 from .models import Patient, Advertisement, PatientHistory
 from .forms import PatientSignupForm, PatientLoginForm
 from .serializers import AmbulanceSerializer  # Import the serializer
 from django.http import HttpResponse, JsonResponse
 from math import radians, cos, sin, sqrt, atan2
 import heapq
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
+from .models import Patient, AmbulanceRequest
+
 
 # Signup view for patients
 def signup(request):
@@ -137,7 +143,7 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     dlon = lon2 - lon1
     dlat = lat2 - lat1
 
-    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    a = sin(dlat / 2)*2 + cos(lat1) * cos(lat2) * sin(dlon / 2)*2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
     distance = R * c
@@ -192,38 +198,28 @@ def dijkstra_shortest_path(start_lat, start_lon):
     return {'error': 'No hospital found near the given location'}
 
 from django.http import JsonResponse
-from .models import Hospital
 
 def get_hospitals(request):
     hospitals = Hospital.objects.all().values('name', 'address', 'latitude', 'longitude')
     return JsonResponse(list(hospitals), safe=False)
 
-
-from django.core.mail import send_mail
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.http import JsonResponse
-from hospital.models import Hospital
-from .models import AmbulanceRequest, Patient
-from .forms import AmbulanceRequestForm
-from django.conf import settings
-
-# Request an ambulance
 def request_ambulance(request, hospital_id):
     if not request.session.get('patient_id'):
         return redirect('patient_login')
 
     patient = get_object_or_404(Patient, id=request.session['patient_id'])
-    hospital = get_object_or_404(Hospital, id=hospital_id)
+
+    # Get the correct Hospital instance
+    hospital_instance = get_object_or_404(Hospital, id=hospital_id)
 
     # Prevent duplicate requests
-    existing_request = AmbulanceRequest.objects.filter(patient=patient, hospital=hospital, status='Pending').exists()
+    existing_request = AmbulanceRequest.objects.filter(patient=patient, hospital=hospital_instance, status='Pending').exists()
     if existing_request:
         messages.warning(request, 'You already have a pending request!')
         return redirect('patient_dashboard')
 
     # Create request
-    ambulance_request = AmbulanceRequest.objects.create(patient=patient, hospital=hospital, status='Pending')
+    ambulance_request = AmbulanceRequest.objects.create(patient=patient, hospital=hospital_instance, status='Pending')
 
     # Notify hospital via email
     subject = 'New Ambulance Request'
@@ -237,14 +233,14 @@ def request_ambulance(request, hospital_id):
         subject,
         message,
         settings.DEFAULT_FROM_EMAIL,
-        [hospital.email],
+        ['hospital@example.com'],  # Ensure hospital email is valid
         fail_silently=False,
     )
 
-    # Optionally send patient a notification that the request was submitted
+    # Notify the patient
     patient_notification_subject = "Ambulance Request Submitted"
     patient_notification_message = (f"Dear {patient.name},\n\n"
-                                    f"Your ambulance request to {hospital.name} has been submitted.\n\n"
+                                    f"Your ambulance request to {hospital_instance.name} has been submitted.\n\n"
                                     f"Status: {ambulance_request.status}\n"
                                     f"We'll notify you once your request is processed.")
 

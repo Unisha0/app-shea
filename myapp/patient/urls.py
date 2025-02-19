@@ -12,7 +12,7 @@ urlpatterns = [
     path('help/', views.help_page, name='help_page'),
     path('patient-history/', views.patient_history, name='patient_history'),
     path('logout/', views.logout, name='logout'),
-     path('upload/', views.upload_medical_history, name='upload_medical_history'),
+    path('upload/', views.upload_medical_history, name='upload_medical_history'),
     path('request-ambulance/<int:hospital_id>/', request_ambulance, name='request_ambulance'),
     path('check-request-status/', check_request_status, name='check_request_status'),
 ]

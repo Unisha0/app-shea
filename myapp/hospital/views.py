@@ -119,7 +119,7 @@ def hospital_list(request):
     # Search hospitals by name or specialty
     hospitals = Hospitaldb.objects.filter(
         Q(name__icontains=search_term) | Q(speciality__icontains=search_term)
-    ).values("name", "speciality", "contact", "address", "latitude", "longitude")
+    ).values("id","name", "speciality", "contact", "address", "latitude", "longitude")
 
     # Sort hospitals by distance to the patient using haversine formula
     hospitals = sorted(hospitals, key=lambda hospital: haversine_distance(

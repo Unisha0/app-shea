@@ -1,5 +1,5 @@
 {% load static %}
-<!DOCTYPE html>
+<! DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -259,40 +259,44 @@
 
     // Function to simulate ambulance request (front-end only)
     function requestAmbulance() {
-      if (!selectedHospital) {
+    if (!selectedHospital || !selectedHospital.id) {
         alert("Please select a hospital first.");
         return;
-      }
+    }
 
-      // Send request to the backend to notify hospital admin
-      fetch('/ambulance/request/', {
+    // Debugging: Log URL before making the request
+    fetch(`/patient/request-ambulance/${selectedHospital.id}/`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken'),  // Make sure to include CSRF token for POST requests in Django
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),  // Include CSRF token
         },
         body: JSON.stringify({
-          hospital_id: selectedHospital.id,
-          patient_lat: patientMarker.getLatLng().lat,
-          patient_lon: patientMarker.getLatLng().lng,
-          patient_name: 'Patient Name',  // You can replace this with the actual patient's name if needed
+            patient_lat: patientMarker ? patientMarker.getLatLng().lat : null,
+            patient_lon: patientMarker ? patientMarker.getLatLng().lng : null,
+            patient_name: 'Patient Name',
         }),
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          document.getElementById("ambulance-request-message").innerHTML = `
-            <p>Ambulance requested from <b>${selectedHospital.name}</b>! You will be notified when it's on its way.</p>
-          `;
-        } else {
-          alert("There was an error processing your request.");
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-      })
-      .catch(error => {
-        console.error('Error:', error);
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            document.getElementById("ambulance-request-message").innerHTML = `
+                <p>Ambulance requested from <b>${selectedHospital.name}</b>! You will be notified when it's on its way.</p>
+            `;
+        } else {
+            alert("Error: " + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
         alert("There was an error processing your request.");
-      });
-    }
+    });
+}
 
     // Function to retrieve the CSRF token from the cookies
     function getCookie(name) {
