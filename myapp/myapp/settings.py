@@ -143,3 +143,19 @@ EMAIL_HOST_USER = 'assistantsmarthealth@gmail.com'  # Your Gmail address
 EMAIL_HOST_PASSWORD = 'pvoz vfam htvk rnnq'  # Your Gmail app password (ensure no spaces or issues here)
 DEFAULT_FROM_EMAIL = 'assistantsmarthealth@gmail.com'  # Sender email
 
+
+# settings.py
+
+import os
+
+# Media files (uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Add these to your urls.py to serve media files during development
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    # Your other URL patterns here
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

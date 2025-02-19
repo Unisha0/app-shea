@@ -60,3 +60,18 @@ class AmbulanceRequestForm(forms.ModelForm):
         model = AmbulanceRequest
         fields = ['hospital','reason']
 
+
+from django import forms
+from .models import MedicalHistory
+
+class MedicalHistoryForm(forms.ModelForm):
+    class Meta:
+        model = MedicalHistory
+        fields = ['file']
+
+    def clean_file(self):
+        file = self.cleaned_data.get('file')
+        if file:
+            if not file.name.endswith(('.pdf', '.png')):
+                raise forms.ValidationError("Only PDF and PNG files are allowed.")
+        return file

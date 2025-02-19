@@ -192,12 +192,11 @@ def respond_to_request(request, request_id, response):
     messages.success(request, f"Request {response}ed successfully!")
     return redirect('view_ambulance_requests')  # Redirect to the list of requests
 
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Hospital
 
-def hospital_profile(request):
+def profile(request):
     # Get hospital_id from session
     hospital_id = request.session.get('hospital_id')
 

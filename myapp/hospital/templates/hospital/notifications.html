@@ -12,7 +12,7 @@
             position: fixed;
             top: 70px;
             right: 20px;
-            width: 350px;
+            width: 400px;
             background: white;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -50,13 +50,27 @@
             padding: 3px 7px;
         }
 
-        .notification {
-            border-bottom: 1px solid #f0f0f0;
-            padding: 10px 0;
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .notification p {
-            margin: 5px 0;
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .notification-row {
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
         }
 
         .accept-reject-buttons {
@@ -85,7 +99,6 @@
         }
     </style>
 </head>
-
 <body>
     <nav class="sidebar close">
         <!-- Sidebar content here -->
@@ -96,36 +109,51 @@
             <div class="text">Notifications</div>
             <div class="notification-bell" onclick="toggleNotifications()">
                 <i class="bx bx-bell"></i>
-                <span class="notification-count">{{ requests.count }}</span>
+                <span class="notification-count">1</span>
             </div>
         </div>
 
-        <!-- Notification box that will appear when bell is clicked -->
+        <!-- Notification box -->
         <div class="notification-box" id="notificationBox">
-            {% for request in requests %}
-            <div class="notification">
-                <p><strong>🚑 Emergency Request from {{ request.patient.name }}</strong></p>
-                <p>Email: {{ request.patient.email }}</p>
-                <p>Phone: {{ request.patient.phone_number }}</p>
-                <p>Address: {{ request.patient.address }}</p>
-                <span class="timestamp">Requested at: {{ request.requested_at }}</span>
-
-                <!-- Accept/Reject buttons -->
-                <div class="accept-reject-buttons">
-                    <a href="{% url 'respond_request' request.id 'accept' %}" class="accept">✅ Accept</a>
-                    <a href="{% url 'respond_request' request.id 'reject' %}" class="reject">❌ Reject</a>
-                </div>
-            </div>
-            {% empty %}
-            <p>No new requests.</p>
-            {% endfor %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="notification-row" onclick="toggleDetails('request1')">
+                        <td>Ritikaa Dahal</td>
+                        <td>ritikaa@example.com</td>
+                        <td>+977 9812345678</td>
+                        <td>Koteshwor, Kathmandu</td>
+                    </tr>
+                    <tr id="request1" class="hidden">
+                        <td colspan="4">
+                            <p><strong>🚑 Emergency Request</strong></p>
+                            <span class="timestamp">Requested at: 12:30 PM, 17th Feb</span>
+                            <div class="accept-reject-buttons">
+                                <a href="#" class="accept">✅ Accept</a>
+                                <a href="#" class="reject">❌ Reject</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 
     <script>
-        // Toggle function to show and hide the notification box
         function toggleNotifications() {
             document.getElementById('notificationBox').classList.toggle('active');
+        }
+
+        function toggleDetails(id) {
+            var detailsRow = document.getElementById(id);
+            detailsRow.classList.toggle('hidden');
         }
     </script>
 </body>

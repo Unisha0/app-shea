@@ -296,3 +296,24 @@ def respond_to_request(request, request_id, action):
 
     return HttpResponse('Ambulance requested successfully!')  # You can redirect or show a success message
     return render(request, 'ambulance/request.html')  # Or just return a response
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import MedicalHistoryForm
+from .models import MedicalHistory
+
+def upload_medical_history(request):
+    if request.method == 'POST':
+        form = MedicalHistoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            medical_history = form.save(commit=False)
+            medical_history.user = request.user  # Associate the file with the logged-in user
+            medical_history.save()
+            messages.success(request, 'Medical history file uploaded successfully!')
+            return redirect('view_medical_history')  # Redirect to view uploaded files
+        else:
+            messages.error(request, 'There was an error uploading the file.')
+    else:
+        form = MedicalHistoryForm()
+
+    return render(request, 'medical/upload_medical_history.html', {'form': form})

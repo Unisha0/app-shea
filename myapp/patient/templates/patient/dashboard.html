@@ -3,7 +3,98 @@
 {% block title %}Patient Dashboard | Smart Health Emergency Assistant{% endblock %}
 
 {% block content %}
+<style>
+    /* General Styling */
+    .home {
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Centers content vertically */
+        align-items: center; /* Centers content horizontally */
+        min-height: 100vh; /* Ensures full height */
+        text-align: center;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
+
+    .text {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .dashboard-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center; /* Centers items horizontally */
+        align-items: center; /* Centers items vertically */
+        text-align: center;
+        max-width: 800px; /* Restricts max width */
+        width: 100%;
+    }
+
+    .dashboard-section {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        flex: 1 1 calc(50% - 40px);
+        margin-bottom: 20px;
+        min-width: 300px; /* Ensures proper width on smaller screens */
+    }
+
+    .dashboard-section h2 {
+        font-size: 20px;
+        margin-bottom: 15px;
+        color: #007bff;
+    }
+
+    .patient-info p {
+        margin: 10px 0;
+        font-size: 16px;
+        color: #555;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        text-align: center;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+        display: inline-block;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    .emergency-btn {
+        background-color: #dc3545;
+    }
+
+    .emergency-btn:hover {
+        background-color: #c82333;
+    }
+</style>
+
 <section class="home">
     <div class="text">Welcome <strong>{{ patient.name }}</strong>!</div>
+
+    <div class="dashboard-container">
+        <!-- Patient Information Section -->
+        <div class="dashboard-section">
+            <h2>Your Information</h2>
+            <div class="patient-info">
+                <p><strong>Name:</strong> {{ patient.name }}</p>
+                <p><strong>Age:</strong> {{ patient.age }}</p>
+                <p><strong>Gender:</strong> {{ patient.gender }}</p>
+                <p><strong>Blood Type:</strong> {{ patient.blood_type }}</p>
+                <p><strong>Primary Care Physician:</strong> {{ patient.primary_care_physician }}</p>
+            </div>
+        </div>
+    </div>
 </section>
 {% endblock %}

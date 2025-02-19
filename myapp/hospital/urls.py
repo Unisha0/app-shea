@@ -16,7 +16,7 @@ urlpatterns = [
     path('account_settings/', views.account_settings, name='account_settings'),
     path('help_and_support/', views.help_and_support, name='help_and_support'),
     path('api/hospitals/', hospital_list, name='hospital-list'),
-    #path('profile/', views.profile, name='profile'),  # Ensure this is defined
+    path('profile/', views.profile, name='profile'),  # Ensure this is defined
     path('ambulance-requests/', view_ambulance_requests, name='view_ambulance_requests'),
     path('respond-request/<int:request_id>/<str:response>/', respond_to_request, name='respond_request'),
 ]

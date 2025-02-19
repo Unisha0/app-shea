@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}User Account Settings | Smart Health Emergency Assistant{% endblock %}
+
+{% block head %}
+<style>
+    /* General Styling */
+    .home {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh; /* Ensure full viewport height */
+        text-align: center;
+        padding: 20px;
+        font-family: 'Poppins', sans-serif;
+        background-color: #f4f6f9;
+    }
+
+    .account-settings {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin: auto; /* Ensure center alignment */
+    }
+
+    .account-settings:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .settings-section {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .settings-section h3 {
+        font-size: 20px;
+        color: #007bff;
+        margin-bottom: 10px;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+    }
+
+    .form-group {
+        width: 100%;
+        position: relative;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        text-align: center;
+        background: #fff;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: 0.3s ease;
+    }
+
+    input:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+    }
+
+    .password-toggle {
+        position: relative;
+        width: 100%;
+    }
+
+    .password-toggle input {
+        padding-right: 40px;
+    }
+
+    .password-toggle .toggle-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 18px;
+        color: #007bff;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+        text-align: center;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="home">
+    <div class="account-settings">
+        <div class="text">Welcome, <strong>{{ patient.name }}</strong>!</div>
+
+        <div class="settings-section">
+            <h3>Update Personal Information</h3>
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="form-group">
+                        <input type="text" name="name" value="{{ patient.name }}" required placeholder="Full Name">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" value="{{ patient.email }}" required placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" name="phone" value="{{ patient.phone }}" placeholder="Phone Number">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="address" value="{{ patient.address }}" placeholder="Address">
+                    </div>
+                </div>
+                <button type="submit" class="btn">Save Changes</button>
+            </form>
+        </div>
+
+        <div class="settings-section">
+            <h3>Change Password</h3>
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="password-toggle">
+                    <input type="password" id="current_password" name="current_password" required placeholder="Current Password">
+                    <span class="toggle-icon" onclick="togglePassword('current_password')">👁</span>
+                </div>
+                <div class="password-toggle">
+                    <input type="password" id="new_password" name="new_password" required placeholder="New Password">
+                    <span class="toggle-icon" onclick="togglePassword('new_password')">👁</span>
+                </div>
+                <div class="password-toggle">
+                    <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm New Password">
+                    <span class="toggle-icon" onclick="togglePassword('confirm_password')">👁</span>
+                </div>
+                <button type="submit" class="btn">Change Password</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3>Update Profile Picture</h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="file" name="profile_picture" accept="image/*">
+            </div>
+            <button type="submit" class="btn">Upload Picture</button>
+        </form>
+    </div>
+    
+
+</section>
+
+<script>
+    function togglePassword(id) {
+        var input = document.getElementById(id);
+        input.type = input.type === "password" ? "text" : "password";
+    }
+</script>
+{% endblock %}
