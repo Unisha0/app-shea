@@ -204,7 +204,8 @@ def get_hospitals(request):
     return JsonResponse(list(hospitals), safe=False)
 
 def request_ambulance(request, hospital_id):
-    if not request.session.get('patient_id'):
+    patient_id = request.session.get('patient_id')
+    if not patient_id:
         return redirect('patient_login')
 
     patient = get_object_or_404(Patient, id=request.session['patient_id'])

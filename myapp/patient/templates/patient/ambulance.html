@@ -264,8 +264,8 @@
         return;
     }
 
-    // Debugging: Log URL before making the request
-    fetch(`/patient/request-ambulance/${selectedHospital.id}/`, {
+    // Debugging: Log URL before making the request #hospital id , patident id and ambulance id banayer agarney
+    fetch(`/patient/request-ambulance/${selectedHospital.id}/`, { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
